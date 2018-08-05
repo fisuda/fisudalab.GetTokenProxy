@@ -1,0 +1,9 @@
+var config = {}
+
+config.keyrock_url = '';  // https://account.lab.fisuda.jp/oauth2/token
+config.port = 8000;
+config.client_id = 'xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxx';
+config.client_secret = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+config.path = "/token"
+
+module.exports = config;
