@@ -4,7 +4,7 @@
 // a client_id and a client_secret. A user who use an application can get
 // an OAuth2 token with his usename and his password.
 // 
-// Copyright (C) Kazuhito Suda
+// Copyright (C) 2018 Kazuhito Suda
 //
 'use strict';
 
@@ -30,11 +30,7 @@ app.post(path, (req, res) => {
   
       res.header('Content-Type', 'application/json; charset=utf-8')
 
-      if (body.username == null) {
-         res.status(404).json({"Error" : {"Message": "missing username"}});
-      } else if (body.password == null) {
-         res.status(404).json({"Error" : {"Message": "missing passowrd"}});
-      } else {
+      if (body.username != null && body.password != null && body.refresh == null) {  // get_token
          get_token(body.username, body.password).then(function (value) {
            console.log('status : ' + value[0].statusCode);
            console.log('body : ' + value[1]);
@@ -42,6 +38,16 @@ app.post(path, (req, res) => {
          }).catch(function (error) {
            res.sendStatus(500); // Internal Server Error
          });
+      } else if (body.username == null && body.password == null && body.refresh != null) {  // refresh_token
+         refresh_token(body.refresh).then(function (value) {
+           console.log('status : ' + value[0].statusCode);
+           console.log('body : ' + value[1]);
+           res.status(value[0].statusCode).send(value[1]);
+         }).catch(function (error) {
+           res.sendStatus(500); // Internal Server Error
+         });
+      } else {
+         res.status(404).json({"Error" : {"Message": "parameter error"}});
       }
    } catch (error) {
      console.log("exception");
@@ -78,6 +84,40 @@ function get_token(username, password) {
     request(options, function (error, response, body) {
       if (error) {
         console.log('error001 in get_token :' + error.message);
+        reject(new Error(error.message));
+      }
+//      console.log('statusCode:', response && response.statusCode);
+//      console.log('body:', body);
+      resolve([response, body]);
+    });
+  });
+}
+
+//
+// async refresh_token()
+//
+function refresh_token(rtoken) {
+  return new Promise(function (resolve, reject) {  
+    var post_data = 'grant_type=refresh_token&refresh_token=' + rtoken;
+  
+    var auth_header = 'Basic ' + (new Buffer(client_id + ':' + client_secret)).toString('base64');
+  
+    var headers = {
+      'Authorization': auth_header,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': post_data.length
+    }
+  
+    var options = {
+        url: keyrock_url,
+        method: 'POST',
+        headers: headers,
+        form: post_data
+    };
+    
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log('error002 in refresh_token :' + error.message);
         reject(new Error(error.message));
       }
 //      console.log('statusCode:', response && response.statusCode);
