@@ -1,11 +1,12 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 WORKDIR /
 COPY package.json /
 RUN apt-get update -y && \
-    apt-get install -y curl gnupg2 && \
-    curl -sL https://deb.nodesource.com/setup_9.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y curl gnupg2 nodejs npm && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     npm install
 COPY server.js /
-CMD node server.js
+COPY config.js /
+ENTRYPOINT ["/usr/bin/node"]
+CMD ["server.js"]
