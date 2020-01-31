@@ -1,12 +1,7 @@
-FROM ubuntu:18.04
-WORKDIR /
+FROM node:10.17.0-slim
 COPY package.json /
-RUN apt-get update -y && \
-    apt-get install -y nodejs npm && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    npm install
+RUN npm install
 COPY server.js /
 COPY config.js /
-ENTRYPOINT ["/usr/bin/node"]
+ENTRYPOINT ["/usr/local/bin/node"]
 CMD ["server.js"]
