@@ -4,7 +4,7 @@
 // a client_id and a client_secret. A user who use an application can get
 // an OAuth2 token with his usename and his password.
 // 
-// Copyright (C) 2018 Kazuhito Suda
+// Copyright (C) 2018-2020 Kazuhito Suda
 //
 'use strict';
 
