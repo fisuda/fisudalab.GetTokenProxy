@@ -5,13 +5,13 @@ port = -p 8000:8000
 vol = -v $(curdir)/config.js:/config.js  -v /etc/localtime:/etc/localtime:ro
 
 build:
-	docker build -t $(container) .
+	docker build --no-cache -t $(container) .
 run:
 	docker run -d --name $(cname) $(port) $(vol) $(container)
 debug:
-	docker run --rm -it --name $(cname) $(port) $(vol) $(container) bash
+	docker run --rm -it --name $(cname) --entrypoint=sh $(port) $(vol) $(container)
 exec:
-	docker exec -it $(cname) bash
+	docker exec -it $(cname) sh
 stop:
 	docker stop $(cname)
 rm:
